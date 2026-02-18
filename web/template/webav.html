@@ -3,56 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>%s</title> <!-- মুভির নাম -->
-    
-    <!-- Plyr CSS for Premium Player Look -->
+    <title>Embed Player</title>
+    <!-- Plyr CSS (ভিডিও প্লেয়ারকে সুন্দর করার জন্য) -->
     <link rel="stylesheet" href="https://cdn.plyr.io/3.6.9/plyr.css" />
-    
     <style>
-        /* ইমবেড এর জন্য পেজটি ফুল স্ক্রিন করা হয়েছে */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* পুরো স্ক্রিন জুড়ে ভিডিও রাখার জন্য CSS */
         body, html { 
-            width: 100%; 
-            height: 100%; 
-            background-color: #000; 
-            overflow: hidden; 
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            background: #000; overflow: hidden; 
         }
-        .player-wrapper {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+        .player-container {
+            width: 100%; height: 100vh;
+            display: flex; justify-content: center; align-items: center;
         }
-        /* Plyr এর সাইজ ইমবেড উইন্ডোর সাথে ফিট করা */
-        .plyr {
-            height: 100%;
-            width: 100%;
-        }
-        /* ভিডিওর ওপর টাইটেল বার (ঐচ্ছিক) */
-        .video-title {
-            position: absolute;
-            top: 10px;
-            left: 15px;
-            z-index: 10;
-            color: rgba(255, 255, 255, 0.8);
-            font-family: sans-serif;
-            font-size: 14px;
-            pointer-events: none;
-            text-shadow: 1px 1px 5px #000;
-        }
+        video { width: 100%; height: 100%; object-fit: contain; }
     </style>
 </head>
 <body>
 
-    <div class="player-wrapper">
-        <!-- ভিডিওর টাইটেল শো করবে -->
-        <div class="video-title">%s</div> 
-
+    <div class="player-container">
         <video id="player" playsinline controls>
-            <!-- ভিডিওর আসল লিংক এখানে বসবে -->
+            <!-- এখানে আপনার ভিডিও লিংক (%s) বসবে -->
             <source src="%s" type="video/mp4">
         </video>
     </div>
@@ -60,20 +31,17 @@
     <!-- Plyr JS -->
     <script src="https://cdn.plyr.io/3.6.9/plyr.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const player = new Plyr('#player', {
-                controls: [
-                    'play-large', 'play', 'progress', 'current-time', 
-                    'duration', 'mute', 'volume', 'settings', 
-                    'pip', 'fullscreen'
-                ],
-                // ভিডিও লোড হওয়ার সাথে সাথে অটো-প্লে না হওয়া (ব্রাউজার পলিসি)
-                autoplay: false, 
-            });
+        // প্লেয়ার সেটআপ
+        const player = new Plyr('#player', {
+            controls: [
+                'play-large', 'play', 'progress', 'current-time', 
+                'duration', 'mute', 'volume', 'settings', 'fullscreen'
+            ],
+            hideControls: true // মাউস সরালে কন্ট্রোল লুকিয়ে যাবে
         });
-        
-        // রাইট ক্লিক বন্ধ রাখা (আপনার আগের কোডের রিকোয়েস্ট অনুযায়ী)
-        document.addEventListener("contextmenu", (e) => e.preventDefault());
+
+        // রাইট ক্লিক বন্ধ (যাতে কেউ লিংক কপি করতে না পারে)
+        document.addEventListener("contextmenu", e => e.preventDefault());
     </script>
 </body>
 </html>
