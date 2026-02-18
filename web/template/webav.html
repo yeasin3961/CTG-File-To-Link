@@ -4,26 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Embed Player</title>
-    <!-- Plyr CSS (ভিডিও প্লেয়ারকে সুন্দর করার জন্য) -->
+    <!-- Plyr CSS -->
     <link rel="stylesheet" href="https://cdn.plyr.io/3.6.9/plyr.css" />
     <style>
-        /* পুরো স্ক্রিন জুড়ে ভিডিও রাখার জন্য CSS */
+        /* ব্যাকগ্রাউন্ড কালো এবং মার্জিন জিরো */
         body, html { 
-            margin: 0; padding: 0; width: 100%; height: 100%; 
-            background: #000; overflow: hidden; 
+            margin: 0; padding: 0; 
+            background: #000; 
+            width: 100%; height: 100%;
         }
-        .player-container {
-            width: 100%; height: 100vh;
-            display: flex; justify-content: center; align-items: center;
+
+        /* প্লেয়ার কন্টেইনার - এটি একদম উপরে থাকবে */
+        .player-wrapper {
+            width: 100%;
+            max-width: 850px; /* মিডিয়াম সাইজ কন্ট্রোল করার জন্য */
+            margin: 0 auto;   /* ডানে-বামে মাঝখানে কিন্তু উপরে থাকবে */
         }
-        video { width: 100%; height: 100%; object-fit: contain; }
+
+        /* ভিডিওর সাইজ ১৬:৯ অনুপাতে মিডিয়াম দেখাবে */
+        .plyr {
+            aspect-ratio: 16 / 9;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
 
-    <div class="player-container">
+    <div class="player-wrapper">
         <video id="player" playsinline controls>
-            <!-- এখানে আপনার ভিডিও লিংক (%s) বসবে -->
+            <!-- আপনার ভিডিওর লিংক এখানে বসবে -->
             <source src="%s" type="video/mp4">
         </video>
     </div>
@@ -31,16 +40,14 @@
     <!-- Plyr JS -->
     <script src="https://cdn.plyr.io/3.6.9/plyr.js"></script>
     <script>
-        // প্লেয়ার সেটআপ
         const player = new Plyr('#player', {
             controls: [
                 'play-large', 'play', 'progress', 'current-time', 
                 'duration', 'mute', 'volume', 'settings', 'fullscreen'
-            ],
-            hideControls: true // মাউস সরালে কন্ট্রোল লুকিয়ে যাবে
+            ]
         });
 
-        // রাইট ক্লিক বন্ধ (যাতে কেউ লিংক কপি করতে না পারে)
+        // রাইট ক্লিক বন্ধ
         document.addEventListener("contextmenu", e => e.preventDefault());
     </script>
 </body>
