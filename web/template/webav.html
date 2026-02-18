@@ -1,54 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embed Player</title>
-    <!-- Plyr CSS -->
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.6.9/plyr.css" />
-    <style>
-        /* ব্যাকগ্রাউন্ড কালো এবং মার্জিন জিরো */
-        body, html { 
-            margin: 0; padding: 0; 
-            background: #000; 
-            width: 100%; height: 100%;
-        }
+<meta charset="UTF-8" />
+<title>{{file_name}} | Fast Stream</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        /* প্লেয়ার কন্টেইনার - এটি একদম উপরে থাকবে */
-        .player-wrapper {
-            width: 100%;
-            max-width: 850px; /* মিডিয়াম সাইজ কন্ট্রোল করার জন্য */
-            margin: 0 auto;   /* ডানে-বামে মাঝখানে কিন্তু উপরে থাকবে */
-        }
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
 
-        /* ভিডিওর সাইজ ১৬:৯ অনুপাতে মিডিয়াম দেখাবে */
-        .plyr {
-            aspect-ratio: 16 / 9;
-            width: 100%;
-        }
-    </style>
+    :root {
+        --bg-color: #030509;
+        --accent-glow: rgba(0, 210, 255, 0.15);
+        --accent-color: #00d2ff;
+        --text-main: #ffffff;
+        --text-dim: #b0b3b8;
+        --card-bg: rgba(255, 255, 255, 0.03);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        
+        /* Premium Button Gradients */
+        --vlc-grad: linear-gradient(135deg, #FF9500 0%, #FF5E00 100%);
+        --mx-grad: linear-gradient(135deg, #007AFF 0%, #00C6FF 100%);
+        --dl-grad: linear-gradient(135deg, #1D976C 0%, #93F9B9 100%);
+        --tg-grad: linear-gradient(135deg, #37aee2 0%, #1e96c8 100%);
+        --dev-grad: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%);
+    }
+
+    body {
+        background-color: var(--bg-color);
+        background-image: 
+            radial-gradient(circle at 0% 0%, rgba(0, 118, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(142, 45, 226, 0.1) 0%, transparent 50%);
+        color: var(--text-main);
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 500px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        animation: fadeIn 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ১. ভিডিও প্লেয়ার (সবার উপরে) */
+    .video-wrapper {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #000;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 20px var(--accent-glow);
+        overflow: hidden;
+        border: 1px solid var(--glass-border);
+    }
+    
+    video { width: 100%; height: 100%; object-fit: contain; }
+
+    /* ২. প্রিমিয়াম ইনফো বক্স (প্লেয়ারের নিচে) */
+    .premium-info-box {
+        background: var(--card-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-radius: 20px;
+        padding: 18px;
+        border: 1px solid var(--glass-border);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    .file-name-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 15px;
+        line-height: 1.4;
+        text-align: center;
+        border-bottom: 1px solid var(--glass-border);
+        padding-bottom: 10px;
+    }
+
+    .meta-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .meta-item {
+        background: rgba(255,255,255,0.02);
+        padding: 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .meta-item span {
+        font-size: 9px;
+        text-transform: uppercase;
+        color: var(--accent-color);
+        letter-spacing: 1.2px;
+        margin-bottom: 4px;
+        font-weight: 800;
+    }
+
+    .meta-item p {
+        margin: 0;
+        font-size: 13px;
+        color: var(--text-dim);
+        font-weight: 500;
+    }
+
+    /* ৩. বাটন সেকশন */
+    .btn-group { display: flex; flex-direction: column; gap: 12px; }
+    .row { display: flex; gap: 12px; }
+
+    .premium-btn {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px;
+        border-radius: 15px;
+        text-decoration: none;
+        color: #fff;
+        font-weight: 600;
+        font-size: 14px;
+        border: 1px solid rgba(255,255,255,0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+
+    .premium-btn::before {
+        content: "";
+        position: absolute;
+        top: 0; left: -100%;
+        width: 100%; height: 100%;
+        background: linear-gradient(120deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: 0.6s;
+    }
+
+    .premium-btn:hover::before { left: 100%; }
+    .premium-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.4); filter: brightness(1.1); }
+
+    .vlc { background: var(--vlc-grad); flex: 1; }
+    .mx { background: var(--mx-grad); flex: 1; }
+    .download { background: var(--dl-grad); font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #000; font-weight: 800; }
+    .telegram { background: var(--tg-grad); }
+    .developer { background: var(--dev-grad); }
+
+    .premium-btn i { font-size: 18px; margin-right: 8px; font-style: normal; }
+
+    /* ৪. বিজ্ঞাপন সেকশন */
+    .ad-container {
+        margin-top: 10px;
+        padding-top: 15px;
+        border-top: 1px solid var(--glass-border);
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .ad-label { font-size: 9px; text-align: center; color: #444; text-transform: uppercase; letter-spacing: 2px; }
+
+    .native-box { 
+        width: 100%;
+        background: rgba(255,255,255,0.01);
+        border-radius: 18px; 
+        min-height: 120px; 
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border: 1px dashed var(--glass-border);
+    }
+
+    .footer { font-size: 11px; color: #444; text-align: center; margin-bottom: 20px; }
+
+    #loader {
+        position: absolute;
+        top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
+        width: 45px; height: 45px;
+        border: 4px solid rgba(0, 210, 255, 0.1);
+        border-top: 4px solid var(--accent-color);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        display: none; z-index: 10;
+    }
+    @keyframes spin { 100% { transform: translate(-50%, -50%) rotate(360deg); } }
+</style>
 </head>
 <body>
 
-    <div class="player-wrapper">
-        <video id="player" playsinline controls>
-            <!-- আপনার ভিডিওর লিংক এখানে বসবে -->
-            <source src="%s" type="video/mp4">
-        </video>
+<div class="container">
+
+    <!-- ভিডিও প্লেয়ার (সবার উপরে) -->
+    <div class="video-wrapper">
+        <div id="loader"></div>
+        <video id="video" controls playsinline poster="{{file_thumb}}"></video>
     </div>
 
-    <!-- Plyr JS -->
-    <script src="https://cdn.plyr.io/3.6.9/plyr.js"></script>
-    <script>
-        const player = new Plyr('#player', {
-            controls: [
-                'play-large', 'play', 'progress', 'current-time', 
-                'duration', 'mute', 'volume', 'settings', 'fullscreen'
-            ]
-        });
+    <!-- প্রিমিয়াম ইনফো বক্স (স্ট্রিমের ঠিক নিচে) -->
+    <div class="premium-info-box">
+        <div class="file-name-title">{{file_name}}</div>
+        <div class="meta-grid">
+            <div class="meta-item">
+                <span>Quality</span>
+                <p>Full HD / 4K</p>
+            </div>
+            <div class="meta-item">
+                <span>File Size</span>
+                <p>{{file_size}}</p>
+            </div>
+            <div class="meta-item">
+                <span>Language</span>
+                <p>Dual Audio / Multi</p>
+            </div>
+            <div class="meta-item">
+                <span>Status</span>
+                <p>Premium Stream</p>
+            </div>
+        </div>
+    </div>
 
-        // রাইট ক্লিক বন্ধ
-        document.addEventListener("contextmenu", e => e.preventDefault());
-    </script>
+    <!-- বাটন সেকশন -->
+    <div class="btn-group">
+        <div class="row">
+            <a href="intent:{{file_url}}#Intent;package=org.videolan.vlc;type=video/*;end" class="premium-btn vlc">
+                <i>🚀</i> VLC Play
+            </a>
+            <a href="intent:{{file_url}}#Intent;package=com.mxtech.videoplayer.ad;type=video/*;end" class="premium-btn mx">
+                <i>⚡</i> MX Play
+            </a>
+        </div>
+
+        <a href="{{file_url}}" download="{{file_name}}" class="premium-btn download">
+            <i>📥</i> Download High Speed
+        </a>
+
+        <a href="https://t.me/yabotz" class="premium-btn telegram">
+            <i>📢</i> Join Telegram Channel
+        </a>
+
+        <a href="https://t.me/yabotz" class="premium-btn developer">
+            <i>🛠️</i> Developer Channel
+        </a>
+    </div>
+
+    <div class="footer">Powered by <span style="color: var(--accent-color);">ya Botz</span></div>
+
+    <!-- বিজ্ঞাপন সেকশন (একেবারে নিচে সিরিয়াল করা) -->
+    
+
+</div>
+
+<!-- Player Logic -->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.4.0/dist/hls.min.js"></script>
+<script>
+    var video = document.getElementById('video');
+    var videoSrc = "{{file_url}}";
+    var loader = document.getElementById('loader');
+
+    function showLoader() { loader.style.display = 'block'; }
+    function hideLoader() { loader.style.display = 'none'; }
+
+    video.addEventListener('waiting', showLoader);
+    video.addEventListener('playing', hideLoader);
+    video.addEventListener('canplay', hideLoader);
+    showLoader();
+
+    if (Hls.isSupported() && videoSrc.includes('.m3u8')) {
+        var hls = new Hls({ autoStartLoad: true, maxBufferLength: 30 });
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, hideLoader);
+    } else {
+        video.src = videoSrc;
+        video.addEventListener('loadedmetadata', hideLoader);
+    }
+</script>
+
 </body>
 </html>
+<head>
