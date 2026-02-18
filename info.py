@@ -89,5 +89,5 @@ HAS_SSL = str(getenv("HAS_SSL", False)).lower() in ("true", "1", "yes")
 BIND_ADDRESS = getenv("WEB_SERVER_BIND_ADDRESS", "127.0.0.1")
 FQDN = getenv("FQDN", "") or BIND_ADDRESS
 PORT_SEGMENT = "" if NO_PORT else f":{PORT}"
-PROTOCOL = "https" if HAS_SSL else "http"
+PROTOCOL = "http" if HAS_SSL else "https"
 URL = f"{PROTOCOL}://{FQDN}{PORT_SEGMENT}/"
