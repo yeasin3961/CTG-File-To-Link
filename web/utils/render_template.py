@@ -82,7 +82,9 @@ async def render_page(id: str, secure_hash: str, src: str = None) -> str:
         disclaimer=avbotz_template.DISCLAIMER,
         report_link=avbotz_template.REPORT_LINK,
         colours=avbotz_template.COLOURS,
-                                    )
+        bot_username=BOT_USERNAME, # এই লাইনটি এড করা হয়েছে
+        file_id=id                 # এই লাইনটি এড করা হয়েছে
+    )
 # Dont Remove My Credit @AV_BOTz_UPDATE 
 # This Repo Is By @BOT_OWNER26 
 # For Any Kind Of Error Ask Us In Support Group @AV_SUPPORT_GROUP
