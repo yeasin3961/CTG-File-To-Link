@@ -39,6 +39,8 @@ async def stream_watch_handler(request: web.Request):
         else:
             id = int(re.search(r"(\d+)(?:\/\S+)?", path).group(1))
             secure_hash = request.rel_url.query.get("hash")
+        
+        # এখানে render_page ফাংশনটি HTML পেজ তৈরি করে পাঠায়
         return web.Response(
             text=await render_page(id, secure_hash), content_type="text/html"
         )
@@ -104,7 +106,6 @@ async def media_streamer(request: web.Request, id: int, secure_hash: str):
         from_bytes = 0
         until_bytes = file_size - 1
 
-    # Validate range
     if until_bytes >= file_size or from_bytes < 0 or until_bytes < from_bytes:
         return web.Response(
             status=416,
@@ -112,7 +113,6 @@ async def media_streamer(request: web.Request, id: int, secure_hash: str):
             headers={"Content-Range": f"bytes */{file_size}"}
         )
 
-    # Setup stream vars
     chunk_size = 1024 * 1024
     offset = from_bytes - (from_bytes % chunk_size)
     first_part_cut = from_bytes - offset
