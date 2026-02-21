@@ -4,7 +4,8 @@ from database.users_db import db
 from pyrogram import Client, filters, enums
 from pyrogram.errors import *
 from pyrogram.types import *
-from info import BOT_USERNAME, URL, BATCH_PROTECT_CONTENT, ADMINS, PROTECT_CONTENT, OWNER_USERNAME, SUPPORT, PICS, FILE_PIC, CHANNEL, VERIFIED_LOG, LOG_CHANNEL, FSUB, BIN_CHANNEL, VERIFY_EXPIRE, BATCH_FILE_CAPTION, FILE_CAPTION, VERIFY_IMG, QR_CODE
+# info থেকে AUTO_DELETE এবং AUTO_DELETE_TIME ইমপোর্ট করা হলো
+from info import BOT_USERNAME, URL, BATCH_PROTECT_CONTENT, ADMINS, PROTECT_CONTENT, OWNER_USERNAME, SUPPORT, PICS, FILE_PIC, CHANNEL, VERIFIED_LOG, LOG_CHANNEL, FSUB, BIN_CHANNEL, VERIFY_EXPIRE, BATCH_FILE_CAPTION, FILE_CAPTION, VERIFY_IMG, QR_CODE, AUTO_DELETE, AUTO_DELETE_TIME
 from datetime import datetime
 from web.utils.file_properties import get_hash
 from utils import get_readable_time, verify_user, check_token, get_size
@@ -17,6 +18,15 @@ import logging
 
 logger = logging.getLogger(__name__)
 BATCH_FILES = {}  
+
+# 🗑️ অটো ডিলিট করার ব্যাকগ্রাউন্ড ফাংশন
+async def auto_delete_func(message):
+    if AUTO_DELETE:
+        await asyncio.sleep(AUTO_DELETE_TIME)
+        try:
+            await message.delete()
+        except:
+            pass
 
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
@@ -66,13 +76,16 @@ async def start(client, message):
             caption = FILE_CAPTION.format(CHANNEL, file_name)
 
         # Send with caption and protect_content
-        return await client.copy_message(
+        sent_file = await client.copy_message(
             chat_id=message.from_user.id,
             from_chat_id=int(BIN_CHANNEL),
             message_id=int(file_id),
             caption=caption,
             protect_content=PROTECT_CONTENT
-	)
+	    )
+        # অটো ডিলিট টাস্ক চালু করা হলো
+        asyncio.create_task(auto_delete_func(sent_file))
+        return
 
     if msg.startswith("verify-"):
         try:
@@ -140,21 +153,24 @@ async def start(client, message):
             if not f_caption:
                 f_caption = title or "Untitled"
             try:
-                await client.send_cached_media(
+                batch_sent = await client.send_cached_media(
                     chat_id=message.from_user.id,
                     file_id=msg.get("file_id"),
                     caption=f_caption,
                     protect_content=BATCH_PROTECT_CONTENT
                 )
+                # ব্যাচ ফাইলের প্রতিটি ফাইল ডিলিট করার টাস্ক
+                asyncio.create_task(auto_delete_func(batch_sent))
             except FloodWait as e:
                 await asyncio.sleep(e.x)
                 logger.warning(f"⏳ FloodWait: {e.x}s")
-                await client.send_cached_media(
+                batch_sent = await client.send_cached_media(
                     chat_id=message.from_user.id,
                     file_id=msg.get("file_id"),
                     caption=f_caption,
                     protect_content=BATCH_PROTECT_CONTENT
                 )
+                asyncio.create_task(auto_delete_func(batch_sent))
             except Exception as e:
                 logger.error(f"❌ Failed to send media: {e}", exc_info=True)
                 continue
@@ -344,13 +360,17 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 file_name = media.file_name or "Unnamed"
                 file_size = get_size(media.file_size)
                 caption = FILE_CAPTION.format(CHANNEL, file_name)
-            await client.copy_message(
+            
+            # পাঠানো ফাইলটি ভেরিয়েবলে নেওয়া হলো ডিলিট করার জন্য
+            sent_cb_file = await client.copy_message(
                 chat_id=user_id,
                 from_chat_id=BIN_CHANNEL,
                 message_id=file_id,
                 caption=caption,
                 protect_content=PROTECT_CONTENT
             )
+            # অটো ডিলিট লজিক
+            asyncio.create_task(auto_delete_func(sent_cb_file))
             return await query.answer()
         except Exception:
             return await query.answer("⚠️ Failed to send file.", show_alert=True)
