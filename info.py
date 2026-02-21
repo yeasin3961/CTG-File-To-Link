@@ -32,15 +32,19 @@ HOW_TO_VERIFY = environ.get('HOW_TO_VERIFY', 'https://t.me/')  # Verification gu
 HOW_TO_OPEN = environ.get('HOW_TO_OPEN', 'https://t.me/')  # File access guide link
 
 # ✅ Feature Toggles (True/False)
-VERIFY = environ.get("VERIFY", False)  # Enable user verification
-FSUB = environ.get("FSUB", True)  # Force Subscribe feature
-ENABLE_LIMIT = environ.get("ENABLE_LIMIT", True)  # Enable file limits
-BATCH_VERIFY = environ.get("BATCH_VERIFY", False)  # Verify files in batch
-IS_SHORTLINK = bool(environ.get('IS_SHORTLINK', False))  # Enable channel shortlink creation
-MAINTENANCE_MODE = environ.get("MAINTENANCE_MODE", False)  # Put bot in maintenance
-PROTECT_CONTENT = environ.get('PROTECT_CONTENT', False)  # Enable content protection
-PUBLIC_FILE_STORE = environ.get('PUBLIC_FILE_STORE', True)  # Public or private file visibility
-BATCH_PROTECT_CONTENT = environ.get('BATCH_PROTECT_CONTENT', False)  # Batch file protection
+VERIFY = environ.get("VERIFY", "False").lower() == "true"  # Enable user verification
+FSUB = environ.get("FSUB", "True").lower() == "true"  # Force Subscribe feature
+ENABLE_LIMIT = environ.get("ENABLE_LIMIT", "True").lower() == "true"  # Enable file limits
+BATCH_VERIFY = environ.get("BATCH_VERIFY", "False").lower() == "true"  # Verify files in batch
+IS_SHORTLINK = environ.get('IS_SHORTLINK', "False").lower() == "true"  # Enable shortlink
+MAINTENANCE_MODE = environ.get("MAINTENANCE_MODE", "False").lower() == "true"  # Put bot in maintenance
+PROTECT_CONTENT = environ.get('PROTECT_CONTENT', "False").lower() == "true"  # Enable content protection
+PUBLIC_FILE_STORE = environ.get('PUBLIC_FILE_STORE', "True").lower() == "true"  # Public visibility
+BATCH_PROTECT_CONTENT = environ.get('BATCH_PROTECT_CONTENT', "False").lower() == "true"
+
+# 🗑️ Auto Delete Settings (এগুলো নতুন যোগ করা হয়েছে)
+AUTO_DELETE = environ.get("AUTO_DELETE", "True").lower() == "true"  # ফাইল অটো ডিলেট হবে কি না (True/False)
+AUTO_DELETE_TIME = int(environ.get("AUTO_DELETE_TIME", "600"))  # কত সেকেন্ড পর ডিলেট হবে (৬০০ সেকেন্ড = ১০ মিনিট)
 
 # 🔗 Shortlink Configuration
 SHORTLINK_URL = environ.get('SHORTLINK_URL', 'techvjlink.site')  # Shortener site
