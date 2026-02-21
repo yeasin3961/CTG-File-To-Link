@@ -23,6 +23,8 @@
         --dl-grad: linear-gradient(135deg, #1D976C 0%, #93F9B9 100%);
         --tg-grad: linear-gradient(135deg, #37aee2 0%, #1e96c8 100%);
         --dev-grad: linear-gradient(135deg, #8E2DE2 0%, #4A00E0 100%);
+        /* New Get File Button Gradient */
+        --get-grad: linear-gradient(135deg, #FF3CAC 0%, #784BA0 50%, #2B86C5 100%);
     }
 
     body {
@@ -157,6 +159,7 @@
     .vlc { background: var(--vlc-grad); flex: 1; }
     .mx { background: var(--mx-grad); flex: 1; }
     .download { background: var(--dl-grad); font-size: 16px; text-transform: uppercase; letter-spacing: 1px; color: #000; font-weight: 800; }
+    .getfile { background: var(--get-grad); font-size: 15px; font-weight: 700; box-shadow: 0 0 15px rgba(255, 60, 172, 0.3); }
     .telegram { background: var(--tg-grad); }
     .developer { background: var(--dev-grad); }
 
@@ -249,6 +252,11 @@
             <i>📥</i> Download High Speed
         </a>
 
+        <!-- নতুন "Get File" বাটন যা বটের ভেতরে নিয়ে যাবে -->
+        <a href="https://t.me/{{bot_username}}?start=msg_{{file_id}}" class="premium-btn getfile">
+            <i>📁</i> Get File in Telegram Bot
+        </a>
+
         <a href="https://t.me/yabotz" class="premium-btn telegram">
             <i>📢</i> Join Telegram Channel
         </a>
@@ -259,9 +267,6 @@
     </div>
 
     <div class="footer">Powered by <span style="color: var(--accent-color);">ya Botz</span></div>
-
-    <!-- বিজ্ঞাপন সেকশন (একেবারে নিচে সিরিয়াল করা) -->
-    
 
 </div>
 
@@ -293,4 +298,3 @@
 
 </body>
 </html>
-<head>
